@@ -1,0 +1,42 @@
+kind: pipeline
+type: kubernetes
+name: default
+
+steps:
+- name: docker-push
+  image: plugins/docker
+  settings:
+    registry: rg.fr-par.scw.cloud/fruitice
+    repo: rg.fr-par.scw.cloud/fruitice/watermark-web
+    tag: ${DRONE_COMMIT}
+    build_args_from_env:
+      - DRONE_COMMIT
+      - DRONE_SYSTEM_HOST
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+  environment:
+    DOCKER_USERNAME:
+      from_secret: docker_username
+    DOCKER_PASSWORD:
+      from_secret: docker_password
+  privileged: true
+
+- name: update chart
+  image: florianhj/drone-auto-pr:1.0.6
+  environment:
+    GITHUB_OAUTH_TOKEN:
+      from_secret: github_token
+  settings:
+    owner: f-hj
+    repository: my-apps
+    regex: 'watermarkWeb: ([A-Za-z0-9.]+)'
+    release: false
+    files:
+      - 'random/watermark/values.yaml'
+    message: 'watermark: update watermark web version'
+  when:
+    branch: master
+    event: push
+    status: success

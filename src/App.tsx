@@ -1,26 +1,52 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useContext, useState } from 'react'
+import './App.css'
+import { Box, Button, Container, Paper, Step, StepLabel, Stepper, TextField } from '@material-ui/core'
+import SelectWatermark from './steps/SelectWatermark'
+import { WatermarkStep, WatermarkStepContext } from './contexts/step'
+import SelectFiles from './steps/SelectFiles'
+import Process from './steps/Process'
 
 function App() {
+  const [step, setStep] = useContext(WatermarkStepContext)
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <Box m={2}>
+      <Container maxWidth="md">
+        <Paper className="App" variant="outlined">
+          <Stepper activeStep={step}>
+            <Step completed={step > WatermarkStep.SelectWatermark}>
+              <StepLabel>Select watermark</StepLabel>
+            </Step>
+            <Step completed={step > WatermarkStep.SelectFiles}>
+              <StepLabel>Select files</StepLabel>
+            </Step>
+            <Step completed={step > WatermarkStep.Process}>
+              <StepLabel>Process</StepLabel>
+            </Step>
+          </Stepper>
+
+          <Box m={4}>
+            {
+              step === WatermarkStep.SelectWatermark ? 
+                <SelectWatermark />
+              : null
+            }
+            {
+              step === WatermarkStep.SelectFiles ? 
+                <SelectFiles />
+              : null
+            }
+            {
+              step === WatermarkStep.Process ? 
+                <Process />
+              : null
+            }
+          </Box>
+
+        </Paper>
+      </Container>
+    </Box>
+  )
 }
 
-export default App;
+export default App
