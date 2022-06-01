@@ -1,23 +1,11 @@
 import { Button, CircularProgress, Typography } from '@material-ui/core'
 import React, { useContext, useEffect, useState } from 'react'
 import { FilesContext } from '../contexts/files'
-import { WatermarkContext } from '../contexts/watermark'
-import { watermarkFile } from '../imagemagick/watermark'
+import { WatermarkStepContext } from '../contexts/step'
 
 function Process() {
-  const [w] = useContext(WatermarkContext)
-  const [files] = useContext(FilesContext)
-
-  const [ loading, setLoading ] = useState<boolean>(false)
-  const [ currentFile, setCurrentFile ] = useState<number>(-1)
-  const process = async () => {
-    setLoading(true)
-    for (const file of files) {
-      setCurrentFile((n) => n + 1)
-      await watermarkFile(file, w)
-    }
-    setLoading(false)
-  }
+  const [step, setStep] = useContext(WatermarkStepContext)
+  const { files, currentFile, process, loading } = useContext(FilesContext)
 
   if (loading) {
     return <>
@@ -29,8 +17,9 @@ function Process() {
 
   return <>
     <Typography variant="body2">You will convert {files.length} files</Typography>
-    <Button onClick={() => {
-      process()
+    <Button onClick={async () => {
+      await process()
+      setStep(step + 1)
     }}>Run</Button>
   </>
 }

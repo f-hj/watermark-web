@@ -6,7 +6,7 @@ import { WatermarkStepContext } from '../contexts/step'
 
 function SelectFiles() {
   const [step, setStep] = useContext(WatermarkStepContext)
-  const [files, setFiles] = useContext(FilesContext)
+  const { files, setFiles } = useContext(FilesContext)
 
   return <>
     <DropzoneArea
@@ -19,7 +19,7 @@ function SelectFiles() {
       //previewChipProps={{classes: { root: classes.previewChip } }}
       previewText=""
       onChange={(files: File[]) => {
-        setFiles(files)
+        setFiles(files.map(file => ({ file })))
       }}
       showAlerts={false}
     />

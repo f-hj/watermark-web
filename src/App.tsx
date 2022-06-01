@@ -5,6 +5,7 @@ import SelectWatermark from './steps/SelectWatermark'
 import { WatermarkStep, WatermarkStepContext } from './contexts/step'
 import SelectFiles from './steps/SelectFiles'
 import Process from './steps/Process'
+import End from './steps/End'
 
 function App() {
   const [step, setStep] = useContext(WatermarkStepContext)
@@ -23,6 +24,9 @@ function App() {
             <Step completed={step > WatermarkStep.Process}>
               <StepLabel>Process</StepLabel>
             </Step>
+            <Step completed={step > WatermarkStep.Finished}>
+              <StepLabel>Complete</StepLabel>
+            </Step>
           </Stepper>
 
           <Box m={4}>
@@ -39,6 +43,11 @@ function App() {
             {
               step === WatermarkStep.Process ? 
                 <Process />
+              : null
+            }
+            {
+              step === WatermarkStep.Finished ?
+                <End />
               : null
             }
           </Box>

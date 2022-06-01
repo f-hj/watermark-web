@@ -38,7 +38,7 @@ function parseIdentify(line: string): ImageSpecs {
   }
 }
 
-async function watermarkFile(file: File, options: WatermarkRequest) {
+async function watermarkFile(file: File, options: WatermarkRequest): Promise<ArrayBufferView> {
   const watermarkedPngs: mFile[] = []
 
   const pngs = await fileToPng(file, options)
@@ -74,13 +74,7 @@ async function watermarkFile(file: File, options: WatermarkRequest) {
   })
   console.log(p)
 
-  if (options.outputFormat === 'pdf') {
-    const d = (`data:application/pdf;base64,${_arrayBufferToBase64(Buffer.from(p.outputFiles[0].content))}`)
-    var a = document.createElement("a")
-    a.href = d
-    a.download = file.name
-    a.click()
-  }
+  return p.outputFiles[0].content
 }
 
 async function watermarkAll (files: File[], options: WatermarkRequest) {
@@ -91,16 +85,6 @@ async function watermarkAll (files: File[], options: WatermarkRequest) {
 
   const end = Date.now()
   console.log(`This task took ${(end-start).toFixed(0)}ms`)
-}
-
-function _arrayBufferToBase64( buffer: Buffer ): string {
-  var binary = '';
-  var bytes = new Uint8Array( buffer );
-  var len = bytes.byteLength;
-  for (var i = 0; i < len; i++) {
-      binary += String.fromCharCode( bytes[ i ] );
-  }
-  return window.btoa( binary );
 }
 
 export { watermarkAll, watermarkFile }

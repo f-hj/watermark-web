@@ -4,7 +4,7 @@ enum WatermarkStep {
   SelectWatermark = 0,
   SelectFiles,
   Process,
-  Finished
+  Finished,
 }
 
 const WatermarkStepContext = createContext<[WatermarkStep, Dispatch<SetStateAction<WatermarkStep>>]>([WatermarkStep.SelectWatermark, () => {}])
