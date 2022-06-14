@@ -1,28 +1,41 @@
-import { Chip } from "@material-ui/core"
+import { Button, Chip, Tooltip } from "@material-ui/core"
 import { useContext } from "react"
 import { FilesContext } from "../contexts/files"
-import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
+import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline'
+import GetAppIcon from '@material-ui/icons/GetApp'
+import { WatermarkStep, WatermarkStepContext } from "../contexts/step"
 
 function End() {
-  const { files } = useContext(FilesContext)
+  const [step, setStep] = useContext(WatermarkStepContext)
+  const { files, reset } = useContext(FilesContext)
   
   return <>
     {
       files.map(file => {
         if (!file.watermarked) {
-          return <Chip icon={<ErrorOutlineIcon />} key={file.file.name} label={file.file.name} />
+          return <>
+            <Tooltip title={file.error ?? 'Unknown error'} aria-label="add">
+              <Chip icon={<ErrorOutlineIcon />} key={file.file.name} label={file.file.name} />
+            </Tooltip>
+            <br />
+          </>
         }
         return <>
-          <Chip label={file.file.name} onClick={() => {
+          <Chip icon={<GetAppIcon />} label={file.file.name} onClick={() => {
             const d = (`data:application/pdf;base64,${_arrayBufferToBase64(Buffer.from(file.watermarked!))}`)
             var a = document.createElement("a")
             a.href = d
             a.download = file.file.name
             a.click()
           }} />
+          <br />
         </>
       })
     }
+    <Button onClick={() => {
+      reset()
+      setStep(WatermarkStep.SelectWatermark)
+    }}>Start again</Button>
   </>
 }
 
