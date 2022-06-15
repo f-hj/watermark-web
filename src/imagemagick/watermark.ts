@@ -65,9 +65,6 @@ async function watermarkFile(file: File, options: WatermarkRequest): Promise<Arr
         'out.png'
       ]
     })
-    if (result.stderr.length > 0) {
-      throw new Error(result.stderr.join('\n'))
-    }
     watermarkedPngs.push(...(result.outputFiles).map(f => new mFile(png.name, f.content)))
   }
 
@@ -75,9 +72,6 @@ async function watermarkFile(file: File, options: WatermarkRequest): Promise<Arr
     inputFiles: watermarkedPngs,
     command: ['convert', ...watermarkedPngs.map(png => png.name), file.name]
   })
-  if (p.stderr.length > 0) {
-    throw new Error(p.stderr.join('\n'))
-  }
   console.log(p)
 
   return p.outputFiles[0].content
